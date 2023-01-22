@@ -38,7 +38,7 @@ app.use((req, res, next) => {
     "X-Requested-With,content-type"
   );
   res.setHeader("Access-Control-Allow-Credentials", true);
-  next();
+  return next();
 });
 
 app.get("/api/:path", (req, res) => {
