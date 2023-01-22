@@ -20,7 +20,10 @@ const normalizePAth = (url) => {
 };
 app
   .use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader(
+      "Access-Control-Allow-Origin",
+      "http://localhost:5173, https://polyaider.web.app, https://polyaider.firebaseapp.com/"
+    );
     res.setHeader(
       "Access-Control-Allow-Methods",
       "GET, POST, OPTIONS, PUT, PATCH, DELETE"
