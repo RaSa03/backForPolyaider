@@ -18,42 +18,45 @@ const normalizePAth = (url) => {
   let path = url.slice(5).split("%2F").join("/");
   return path;
 };
-app
-  .use((req, res, next) => {
-    const ACAO = res.getHeader("Access-Control-Allow-Origin");
-    const CURRENT_URL =
-      "http://localhost https://polyaider.web.app https://polyaider.firebaseapp.com/";
-    if (CURRENT_URL.includes(ACAO)) {
-      res.setHeader("Access-Control-Allow-Origin", ACAO);
+app.use((req, res, next) => {
+  const CURRENT_URL = [
+    "http://localhost:5173",
+    "https://polyaider.web.app",
+    "https://polyaider.firebaseapp.com",
+  ];
+  const ACAO = req.headers.origin;
+
+  if (CURRENT_URL.includes(ACAO)) {
+    res.setHeader("Access-Control-Allow-Origin", ACAO);
+  }
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  next();
+});
+
+app.get("/api/:path", (req, res) => {
+  const PATH = normalizePAth(req.params.path);
+  console.log(PATH);
+  (async () => {
+    try {
+      const metaGet = await meta.get(API_TOKEN, PATH, {
+        limit: 1000,
+      });
+      return metaGet;
+    } catch (error) {
+      console.error("errrrorr", error);
     }
-    res.setHeader(
-      "Access-Control-Allow-Methods",
-      "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-    );
-    res.setHeader(
-      "Access-Control-Allow-Headers",
-      "X-Requested-With,content-type"
-    );
-    res.setHeader("Access-Control-Allow-Credentials", true);
-    next();
-  })
+  })().then((meta) => {
+    const json = JSON.stringify(meta);
+    res.send(json);
+  });
+});
 
-  .get("/api/:path", (req, res) => {
-    const PATH = normalizePAth(req.params.path);
-    console.log(PATH);
-    (async () => {
-      try {
-        const metaGet = await meta.get(API_TOKEN, PATH, {
-          limit: 1000,
-        });
-        return metaGet;
-      } catch (error) {
-        console.error("errrrorr", error);
-      }
-    })().then((meta) => {
-      const json = JSON.stringify(meta);
-      res.send(json);
-    });
-  })
-
-  .listen(PORT, () => console.log("SERVER STARTED IN PORT :" + PORT));
+app.listen(PORT, () => console.log("SERVER STARTED IN PORT :" + PORT));
