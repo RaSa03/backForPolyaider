@@ -20,10 +20,12 @@ const normalizePAth = (url) => {
 };
 app
   .use((req, res, next) => {
-    res.setHeader(
-      "Access-Control-Allow-Origin",
-      "http://localhost:5173, https://polyaider.web.app, https://polyaider.firebaseapp.com/"
-    );
+    const ACAO = res.getHeader("Access-Control-Allow-Origin");
+    const CURRENT_URL =
+      "http://localhost https://polyaider.web.app https://polyaider.firebaseapp.com/";
+    if (CURRENT_URL.includes(ACAO)) {
+      res.setHeader("Access-Control-Allow-Origin", ACAO);
+    }
     res.setHeader(
       "Access-Control-Allow-Methods",
       "GET, POST, OPTIONS, PUT, PATCH, DELETE"
